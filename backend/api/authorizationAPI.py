@@ -22,7 +22,7 @@ class AuthService(AuthServiceServicer):
     def Login(self, request, context):
         response = (
             self.supabase.table("users")
-            .select("login, password_hash")
+            .select("user_id, login, password_hash")
             .eq("login", request.user_name)
             .execute()
         )
@@ -38,7 +38,7 @@ class AuthService(AuthServiceServicer):
                 error_detail="wrong password"
             )
         
-        token = security.create_access_token(uid="smthg")
+        token = security.create_access_token(uid=str(response.data[0]['user_id']))
         return LoginResponse(
             access_token=token,
             status_code=200
