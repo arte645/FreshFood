@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+authx
+httpx
+asyncio
+supabase
+python-dotenv
+py-fast-grpc
