@@ -50,3 +50,6 @@ def serve():
     server.add_insecure_port("[::]:50051")
     server.start()
     server.wait_for_termination()
+
+
+serve()
