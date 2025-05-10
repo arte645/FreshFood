@@ -39,12 +39,34 @@ class AuthServiceStub(object):
                 request_serializer=auth__pb2.LoginRequest.SerializeToString,
                 response_deserializer=auth__pb2.LoginResponse.FromString,
                 _registered_method=True)
+        self.Login_vk = channel.unary_unary(
+                '/auth.AuthService/Login_vk',
+                request_serializer=auth__pb2.Empty.SerializeToString,
+                response_deserializer=auth__pb2.Login_vkResponse.FromString,
+                _registered_method=True)
+        self.callback = channel.unary_unary(
+                '/auth.AuthService/callback',
+                request_serializer=auth__pb2.callbackRequest.SerializeToString,
+                response_deserializer=auth__pb2.callbackResponse.FromString,
+                _registered_method=True)
 
 
 class AuthServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Login(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Login_vk(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def callback(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -57,6 +79,16 @@ def add_AuthServiceServicer_to_server(servicer, server):
                     servicer.Login,
                     request_deserializer=auth__pb2.LoginRequest.FromString,
                     response_serializer=auth__pb2.LoginResponse.SerializeToString,
+            ),
+            'Login_vk': grpc.unary_unary_rpc_method_handler(
+                    servicer.Login_vk,
+                    request_deserializer=auth__pb2.Empty.FromString,
+                    response_serializer=auth__pb2.Login_vkResponse.SerializeToString,
+            ),
+            'callback': grpc.unary_unary_rpc_method_handler(
+                    servicer.callback,
+                    request_deserializer=auth__pb2.callbackRequest.FromString,
+                    response_serializer=auth__pb2.callbackResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -86,6 +118,60 @@ class AuthService(object):
             '/auth.AuthService/Login',
             auth__pb2.LoginRequest.SerializeToString,
             auth__pb2.LoginResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Login_vk(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/auth.AuthService/Login_vk',
+            auth__pb2.Empty.SerializeToString,
+            auth__pb2.Login_vkResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def callback(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/auth.AuthService/callback',
+            auth__pb2.callbackRequest.SerializeToString,
+            auth__pb2.callbackResponse.FromString,
             options,
             channel_credentials,
             insecure,

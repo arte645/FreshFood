@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nauth.proto\x12\x04\x61uth\"8\n\x0cLoginRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x15\n\ruser_password\x18\x02 \x01(\t\"P\n\rLoginResponse\x12\x14\n\x0c\x61\x63\x63\x65ss_token\x18\x01 \x01(\t\x12\x13\n\x0bstatus_code\x18\x02 \x01(\x05\x12\x14\n\x0c\x65rror_detail\x18\x03 \x01(\t2?\n\x0b\x41uthService\x12\x30\n\x05Login\x12\x12.auth.LoginRequest\x1a\x13.auth.LoginResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nauth.proto\x12\x04\x61uth\"8\n\x0cLoginRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x15\n\ruser_password\x18\x02 \x01(\t\"P\n\rLoginResponse\x12\x14\n\x0c\x61\x63\x63\x65ss_token\x18\x01 \x01(\t\x12\x13\n\x0bstatus_code\x18\x02 \x01(\x05\x12\x14\n\x0c\x65rror_detail\x18\x03 \x01(\t\"\x07\n\x05\x45mpty\"4\n\x10Login_vkResponse\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x13\n\x0bstatus_code\x18\x02 \x01(\x05\"A\n\x0f\x63\x61llbackRequest\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\x11\n\tdevice_id\x18\x03 \x01(\t\"=\n\x10\x63\x61llbackResponse\x12\x14\n\x0c\x61\x63\x63\x65ss_token\x18\x01 \x01(\t\x12\x13\n\x0bstatus_code\x18\x02 \x01(\x05\x32\xab\x01\n\x0b\x41uthService\x12\x30\n\x05Login\x12\x12.auth.LoginRequest\x1a\x13.auth.LoginResponse\x12/\n\x08Login_vk\x12\x0b.auth.Empty\x1a\x16.auth.Login_vkResponse\x12\x39\n\x08\x63\x61llback\x12\x15.auth.callbackRequest\x1a\x16.auth.callbackResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,6 +35,14 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_LOGINREQUEST']._serialized_end=76
   _globals['_LOGINRESPONSE']._serialized_start=78
   _globals['_LOGINRESPONSE']._serialized_end=158
-  _globals['_AUTHSERVICE']._serialized_start=160
-  _globals['_AUTHSERVICE']._serialized_end=223
+  _globals['_EMPTY']._serialized_start=160
+  _globals['_EMPTY']._serialized_end=167
+  _globals['_LOGIN_VKRESPONSE']._serialized_start=169
+  _globals['_LOGIN_VKRESPONSE']._serialized_end=221
+  _globals['_CALLBACKREQUEST']._serialized_start=223
+  _globals['_CALLBACKREQUEST']._serialized_end=288
+  _globals['_CALLBACKRESPONSE']._serialized_start=290
+  _globals['_CALLBACKRESPONSE']._serialized_end=351
+  _globals['_AUTHSERVICE']._serialized_start=354
+  _globals['_AUTHSERVICE']._serialized_end=525
 # @@protoc_insertion_point(module_scope)

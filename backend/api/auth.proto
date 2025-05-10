@@ -13,6 +13,26 @@ message LoginResponse {
   string error_detail = 3;
 }
 
+message Empty {}
+
+message Login_vkResponse{
+  string url = 1;
+  int32 status_code = 2;
+}
+
+message callbackRequest{
+  string code = 1;
+  string state = 2;
+  string device_id = 3;
+}
+
+message callbackResponse{
+  string access_token = 1;
+  int32 status_code = 2;
+}
+
 service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Login_vk(Empty) returns (Login_vkResponse);
+  rpc callback(callbackRequest) returns (callbackResponse);
 }

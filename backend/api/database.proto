@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package database;
+
+message GetRequest {
+  string table = 1;
+  string selected_columns = 2;
+  string rule_of_selection = 3;
+}
+
+message GetResponse {
+  string data_json = 1;
+  int32 status_code = 2;
+}
+
+message PostRequest {
+  string table = 1;
+  string inserted_columns_and_data = 2;
+}
+
+message PostResponse {
+  int32 status_code = 1;
+}
+
+message UpdateRequest {
+  string table = 1;
+  string inserted_columns_and_data = 2;
+  string name_of_item_id = 3;
+  string item_id = 4;
+}
+
+message UpdateResponse {
+  int32 status_code = 1;
+}
+
+message DeleteRequest {
+  string table = 1;
+  string name_of_item_id = 2;
+  string item_id = 3;
+}
+
+message DeleteResponse {
+  int32 status_code = 1;
+}
+
+service DatabaseService {
+  rpc Get (GetRequest) returns (GetResponse);
+  rpc Post (PostRequest) returns (PostResponse);
+  rpc Update (UpdateRequest) returns (UpdateResponse);
+  rpc Delete (DeleteRequest) returns (DeleteResponse);
+}
