@@ -49,12 +49,13 @@ class AuthService(AuthServiceServicer):
             )
             answer = database_client.Get(grpc_request)
             data_json = json.loads(answer.data_json)
+            print(f"{self.hash_password(request.user_password)}----------{data_json[0]['password_hash']}")
             if len(data_json) <= 0:
                 return LoginResponse(
                     status_code=401,
                     error_detail="login is non-existent"
                 )
-            elif request.user_password != data_json[0]['password_hash']:
+            elif self.hash_password(request.user_password) != data_json[0]['password_hash']:
                 return LoginResponse(
                     status_code=400,
                     error_detail="wrong password"
@@ -69,8 +70,8 @@ class AuthService(AuthServiceServicer):
             raise e
 
     def hash_password(self, password: str) -> str:
-        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        return hashed.decode('utf-8')
+        salt = os.getenv("JWT_KEY")
+        return hashlib.sha256((salt + password).encode('utf-8')).hexdigest()
 
     def Registration(self, request, context=None, first_name=None, last_name=None, user_id = None):
         if not user_id:
