@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 from models.UserLoginSchema import UserLoginSchema
 import grpc
-from auth_pb2 import LoginRequest, Empty, callbackRequest
+from auth_pb2 import LoginRequest, Empty, callbackRequest, RegistrationRequest
 from auth_pb2_grpc import AuthServiceStub
 from database_pb2_grpc import DatabaseServiceStub
 from authx import AuthXConfig, AuthX
@@ -94,12 +94,30 @@ async def callback(code: str, state: str, response: Response, device_id: str = "
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Ошибка при запросе к сервису авторизации: {e}")
 
-async def get_token_from_cookie(request: Request) -> str:
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="Access token not found in cookies")
-    return request
+@app.post("/register", summary="Создать новый аккаунт", tags=["Основные ручки"])
+async def login(user: UserLoginSchema, response: Response):
+    async with auth_semaphore:
+        try:
+            grpc_request = RegistrationRequest(
+                login=user.userName,
+                password=user.userPassword
+            )
+            answer = auth_client.Registration(grpc_request)
 
+            if answer.status_code != 200:
+                raise HTTPException(status_code=answer.status_code, detail=answer.error_detail)
+
+            response.set_cookie(
+                key="access_token",
+                value=answer.access_token,
+                max_age=3600
+            )
+            return {"status":"created"}
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Ошибка при запросе к сервису авторизации: {e}")
+
+# !!!!!!!!!!!!!! перенести логику в микросервис
 @app.get("/user_settings", summary="Защищённая ручка", tags=["Основные ручки"])
 async def user_settings(token_data=Depends(security.access_token_required)):
         try:

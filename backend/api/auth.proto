@@ -31,8 +31,19 @@ message callbackResponse{
   int32 status_code = 2;
 }
 
+message RegistrationRequest{
+  string login = 1;
+  string password = 2;
+}
+
+message RegistrationResponse{
+  int32 status_code = 1;
+  string access_token = 2;
+}
+
 service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse);
   rpc Login_vk(Empty) returns (Login_vkResponse);
   rpc callback(callbackRequest) returns (callbackResponse);
+  rpc Registration(RegistrationRequest) returns (RegistrationResponse);
 }

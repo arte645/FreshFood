@@ -1,6 +1,6 @@
 from concurrent import futures
 import grpc
-from auth_pb2 import LoginResponse, Empty, callbackResponse, callbackRequest, Login_vkResponse
+from auth_pb2 import LoginResponse, Empty, callbackResponse, callbackRequest, Login_vkResponse, RegistrationResponse, RegistrationRequest
 from auth_pb2_grpc import AuthServiceServicer, add_AuthServiceServicer_to_server
 from fastapi import FastAPI, Depends, HTTPException, Response, Request
 import asyncio
@@ -16,6 +16,9 @@ from fastapi.responses import HTMLResponse
 from database_pb2 import GetRequest, GetResponse, PostRequest, PostResponse, UpdateRequest, UpdateResponse, DeleteRequest, DeleteResponse
 from database_pb2_grpc import DatabaseServiceStub
 import json
+import time
+import bcrypt
+import random
 
 load_dotenv()
 
@@ -30,6 +33,12 @@ database_client = DatabaseServiceStub(channel)
 class AuthService(AuthServiceServicer):
     def __init__(self):
         pass
+
+    def generate_user_id(self) -> int:
+        timestamp = int(time.time() * 1000)  # миллисекунды
+        random_part = random.randint(0, 99999)  # 5-значное случайное число
+        unique_id = int(f"{timestamp}{random_part:05d}"[:18])  # обрезаем до 18 цифр
+        return unique_id
     
     def Login(self, request, context):
         try:
@@ -58,6 +67,27 @@ class AuthService(AuthServiceServicer):
             )
         except Exception as e:
             raise e
+
+    def hash_password(self, password: str) -> str:
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        return hashed.decode('utf-8')
+
+    def Registration(self, request, context=None, first_name=None, last_name=None, user_id = None):
+        if not user_id:
+            user_id = self.generate_user_id()
+        inserted_columns_and_data = {"user_id": user_id,
+                        "login": request.login,
+                        "password_hash": self.hash_password(request.password),
+                        "first_name":first_name,
+                        "last_name":last_name,
+                        "email":None,"address": None,"diet_type": None, "phone_number":None}
+        inserted_columns_string = json.dumps(inserted_columns_and_data)
+        grpc_request = PostRequest(
+                    table = "users",
+                    inserted_columns_and_data = inserted_columns_string
+                )
+        ans = database_client.Post(grpc_request)
+        return RegistrationResponse(status_code = 200, access_token = str(security.create_access_token(uid=str(user_id))))
     
     session_store = {}
 
@@ -136,20 +166,12 @@ class AuthService(AuthServiceServicer):
                 raise Exception(f"VK ID error: {resp.status_code}, {resp.text}")
             answer = resp.json()["user"]
             try:
-                inserted_columns_and_data = {"user_id": answer["user_id"],
-                        "login": answer["first_name"]+answer["last_name"],
-                        "password_hash":"qwerty123",
-                        "first_name":answer["first_name"],
-                        "last_name":answer["last_name"],
-                        "email":None,"address": None,"diet_type": None, "phone_number":None}
-                inserted_columns_string = json.dumps(inserted_columns_and_data)
-                grpc_request = PostRequest(
-                    table = "users",
-                    inserted_columns_and_data = inserted_columns_string
-                )
-                ans = database_client.Post(grpc_request)
-                return security.create_access_token(uid=str(answer["user_id"]))
-            
+                ans = self.Registration(request=RegistrationRequest(login = "vk_"+answer["first_name"]+answer["last_name"],
+                                                            password = self.hash_password("qwerty123")),
+                                                            first_name=answer["first_name"],
+                                                            last_name=answer["last_name"],
+                                                            user_id=answer["user_id"])
+                return ans.access_token
             except Exception as e:
                 raise e
 
